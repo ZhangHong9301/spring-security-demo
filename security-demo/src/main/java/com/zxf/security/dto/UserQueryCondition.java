@@ -1,5 +1,7 @@
 package com.zxf.security.dto;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * Create by Mr.ZXF
  * on 2019-03-19 15:21
@@ -8,9 +10,12 @@ public class UserQueryCondition {
 
     private String userName;
 
-    private int age;
+    @ApiModelProperty(value = "用户年龄起始值",example = "123")
+    private Integer age;
+    @ApiModelProperty(value = "用户年龄终止值",example = "123")
+    private Integer ageTo;
 
-    private int ageTo;
+    private String xxx;
 
     public String getUserName() {
         return userName;
@@ -20,7 +25,7 @@ public class UserQueryCondition {
         this.userName = userName;
     }
 
-    public int getAge() {
+    public Integer getAge() {
         return age;
     }
 
@@ -28,7 +33,7 @@ public class UserQueryCondition {
         this.age = age;
     }
 
-    public int getAgeTo() {
+    public Integer getAgeTo() {
         return ageTo;
     }
 
@@ -43,7 +48,5 @@ public class UserQueryCondition {
     public void setXxx(String xxx) {
         this.xxx = xxx;
     }
-
-    private String xxx;
 
 }

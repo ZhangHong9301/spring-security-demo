@@ -1,8 +1,11 @@
-package com.zxf.security.web;
+package com.zxf.security.web.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.zxf.security.dto.User;
 import com.zxf.security.dto.UserQueryCondition;
+import com.zxf.security.exception.UserNotExisException;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.springframework.data.domain.Pageable;
@@ -24,11 +27,11 @@ import java.util.List;
 public class UserController {
 
     @PostMapping
-    public User create(@Valid @RequestBody User user, BindingResult errors) {
+    public User create(@Valid @RequestBody User user) {
 
-        if (errors.hasErrors()) {
+        /*if (errors.hasErrors()) {
             errors.getAllErrors().stream().forEach(error -> System.out.println(error.getDefaultMessage()));
-        }
+        }*/
         System.out.println(user.getId());
         System.out.println(user.getUserName());
         System.out.println(user.getPassword());
@@ -63,6 +66,7 @@ public class UserController {
 
     @GetMapping
     @JsonView(User.UserSimpleView.class)
+    @ApiOperation(value = "用户查询服务")
     public List<User> query(UserQueryCondition userQueryCondition, @PageableDefault(page = 2, size = 17, sort = "userName,asc") Pageable pageable) {
         System.out.println(ReflectionToStringBuilder.toString(userQueryCondition, ToStringStyle.MULTI_LINE_STYLE));
         System.out.println(pageable.getPageSize());
@@ -78,7 +82,11 @@ public class UserController {
     /* :\d+ 正则表达式限制数字*/
     @GetMapping("/{id:\\d+}")
     @JsonView(User.UserDetailView.class)
-    public User getInfo(@PathVariable String id) {
+    public User getInfo(@ApiParam("用户id") @PathVariable String id) {
+
+        // throw new RuntimeException("user not exist");
+
+        System.out.println("进入getInfo服务");
         User user = new User();
         user.setUserName("tom");
         return user;
