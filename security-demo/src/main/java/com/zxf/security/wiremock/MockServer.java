@@ -13,5 +13,7 @@ public class MockServer {
     public static void main(String[] args) {
         WireMock.configureFor("192.168.0.125",8080);
         removeAllMappings();
+
+        System.out.println("=========");
     }
 }

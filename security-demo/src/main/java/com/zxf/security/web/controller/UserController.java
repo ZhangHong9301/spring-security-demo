@@ -1,6 +1,7 @@
 package com.zxf.security.web.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zxf.security.dto.User;
 import com.zxf.security.dto.UserQueryCondition;
 import com.zxf.security.exception.UserNotExisException;
@@ -10,9 +11,14 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import sun.plugin.liveconnect.SecurityContextHelper;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -26,11 +32,16 @@ import java.util.List;
 @RequestMapping("/user")
 public class UserController {
 
+    @GetMapping("/me")
+    public Object getCurrentUser(@AuthenticationPrincipal UserDetails user){
+        return user;
+    }
+
     @PostMapping
     public User create(@Valid @RequestBody User user) {
 
         /*if (errors.hasErrors()) {
-            errors.getAllErrors().stream().forEach(error -> System.out.println(error.getDefaultMessage()));
+            errors.getAllErrors().stream().forEach(resources.error -> System.out.println(resources.error.getDefaultMessage()));
         }*/
         System.out.println(user.getId());
         System.out.println(user.getUserName());
@@ -45,8 +56,8 @@ public class UserController {
 
         if (errors.hasErrors()) {
             errors.getAllErrors().stream().forEach(error -> {
-                // FieldError fieldError = (FieldError) error;
-                // String message = fieldError.getField()+" "+error.getDefaultMessage();
+                // FieldError fieldError = (FieldError) resources.error;
+                // String message = fieldError.getField()+" "+resources.error.getDefaultMessage();
                 System.out.println(error.getDefaultMessage());
             });
 
