@@ -1,15 +1,13 @@
 package com.zxf.security.core.captcha;
 
+import com.zxf.security.core.properties.SecurityConstants;
 import com.zxf.security.core.properties.SecurityProperties;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.social.connect.web.HttpSessionSessionStrategy;
-import org.springframework.social.connect.web.SessionStrategy;
+import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
-import org.springframework.web.bind.ServletRequestBindingException;
-import org.springframework.web.bind.ServletRequestUtils;
-import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -17,7 +15,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -25,43 +24,74 @@ import java.util.Set;
  * on 2019-03-22 11:18
  * OncePerRequestFilter 保证只被调一次 ; InitializingBean 初始化
  */
+@Component("captchaFilter")
 public class CaptchaFilter extends OncePerRequestFilter implements InitializingBean {
 
+    /**
+     * 验证码失败处理器
+     */
+    @Autowired
     private AuthenticationFailureHandler authenticationFailureHandler;
 
-    private SessionStrategy sessionStrategy = new HttpSessionSessionStrategy();
-
-    private Set<String> urls = new HashSet<>();
-
+    /**
+     * 系统配置信息
+     */
+    @Autowired
     private SecurityProperties securityProperties;
 
-    /*路径匹配工具*/
+    /**
+     * 系统中的校验码处理器
+     */
+    @Autowired
+    private CaptchaProcessorHolder captchaProcessorHolder;
+
+    /**
+     * 存放所有需要校验验证码的url
+     */
+    private Map<String, CaptchaType> urlMap = new HashMap<>();
+
+    /**
+     * 验证请求url与配置的url是否匹配的工具类
+     */
     private AntPathMatcher pathMatcher = new AntPathMatcher();
 
+    /**
+     * 初始化要拦截的url配置信息
+     *
+     * @throws ServletException
+     */
     @Override
     public void afterPropertiesSet() throws ServletException {
         super.afterPropertiesSet();
-        String[] configUrls = StringUtils.splitByWholeSeparatorPreserveAllTokens(securityProperties.getCaptcha().getImage().getUrl(), ",");
-        for (String configUrl : configUrls) {
-            urls.add(configUrl);
+
+        urlMap.put(SecurityConstants.DEFAULT_LOGIN_PROCESSING_URL_FORM, CaptchaType.IMAGE);
+        addUrlToMap(securityProperties.getCaptcha().getImage().getUrl(), CaptchaType.IMAGE);
+
+        urlMap.put(SecurityConstants.DEFAULT_LOGIN_PROCESSING_URL_MOBILE, CaptchaType.SMS);
+        addUrlToMap(securityProperties.getCaptcha().getSms().getUrl(), CaptchaType.SMS);
+    }
+
+    /**
+     * 将系统中配置的需要校验验证码的url根据校验的类型放入map
+     */
+    protected void addUrlToMap(String urlString, CaptchaType type) {
+        if (StringUtils.isNotBlank(urlString)) {
+            String[] urls = StringUtils.splitByWholeSeparatorPreserveAllTokens(urlString, ",");
+            for (String url : urls) {
+                urlMap.put(url, type);
+            }
         }
-        urls.add("/authentication/form");
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        boolean action = false;
-        /*匹配需要验证的URL*/
-        for (String url : urls) {
-            if (pathMatcher.match(url, request.getRequestURI())) {
-                action = true;
-            }
-        }
+        CaptchaType type = getCaptchaType(request);
 
-        if (action) {
+        if (type != null) {
+            logger.info("校验请求(" + request.getRequestURI() + ")中的验证码,验证码类型" + type);
             try {
-                validate(new ServletWebRequest(request));
+                captchaProcessorHolder.findCaptchaProcessor(type);
             } catch (CaptchaException e) {
                 authenticationFailureHandler.onAuthenticationFailure(request, response, e);
                 return;
@@ -72,54 +102,23 @@ public class CaptchaFilter extends OncePerRequestFilter implements InitializingB
 
     }
 
-    private void validate(ServletWebRequest servletWebRequest) throws ServletRequestBindingException, CaptchaException {
-
-        /*生成的captcha*/
-        ImageCaptcha captchaInSession = (ImageCaptcha) sessionStrategy.getAttribute(servletWebRequest, CaptchaController.SESSION_KEY);
-
-        /*用户输入的captcha*/
-        String captchaInRequest = ServletRequestUtils.getStringParameter(servletWebRequest.getRequest(), "captcha");
-
-        if (StringUtils.isBlank(captchaInRequest)) {
-            throw new CaptchaException("验证码的值不能为空");
+    /**
+     * 获取校验码的类型，如果当前请求不需要校验，则返回null
+     *
+     * @param request
+     * @return
+     */
+    private CaptchaType getCaptchaType(HttpServletRequest request) {
+        CaptchaType result = null;
+        if (!StringUtils.equalsIgnoreCase(request.getMethod(), "get")) {
+            Set<String> urls = urlMap.keySet();
+            for (String url : urls) {
+                if (pathMatcher.match(url, request.getRequestURI())) {
+                    result = urlMap.get(url);
+                }
+            }
         }
-
-        if (captchaInSession == null) {
-            throw new CaptchaException("验证码不存在");
-        }
-
-        if (captchaInSession.isExpried()) {
-            sessionStrategy.removeAttribute(servletWebRequest, CaptchaController.SESSION_KEY);
-            throw new CaptchaException("验证码已过期");
-        }
-
-        if (!StringUtils.equals(captchaInSession.getCaptcha(), captchaInRequest)) {
-            throw new CaptchaException("验证码不匹配");
-        }
-        sessionStrategy.removeAttribute(servletWebRequest, CaptchaController.SESSION_KEY);
+        return result;
     }
 
-    public AuthenticationFailureHandler getAuthenticationFailureHandler() {
-        return authenticationFailureHandler;
-    }
-
-    public void setAuthenticationFailureHandler(AuthenticationFailureHandler authenticationFailureHandler) {
-        this.authenticationFailureHandler = authenticationFailureHandler;
-    }
-
-    public SessionStrategy getSessionStrategy() {
-        return sessionStrategy;
-    }
-
-    public void setSessionStrategy(SessionStrategy sessionStrategy) {
-        this.sessionStrategy = sessionStrategy;
-    }
-
-    public SecurityProperties getSecurityProperties() {
-        return securityProperties;
-    }
-
-    public void setSecurityProperties(SecurityProperties securityProperties) {
-        this.securityProperties = securityProperties;
-    }
 }

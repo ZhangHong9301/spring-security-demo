@@ -1,5 +1,6 @@
-package com.zxf.security.core.captcha;
+package com.zxf.security.core.captcha.image;
 
+import com.zxf.security.core.captcha.CaptchaGenerator;
 import com.zxf.security.core.properties.SecurityProperties;
 import com.zxf.security.core.util.ValidateCode;
 import org.springframework.beans.factory.annotation.Autowired;

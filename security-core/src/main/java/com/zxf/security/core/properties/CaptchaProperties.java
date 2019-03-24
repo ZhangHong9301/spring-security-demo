@@ -1,7 +1,5 @@
 package com.zxf.security.core.properties;
 
-import com.zxf.security.core.captcha.ImageCaptcha;
-
 /**
  * Create by Mr.ZXF
  * on 2019-03-22 14:59

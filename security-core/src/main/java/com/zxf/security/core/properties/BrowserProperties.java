@@ -7,7 +7,11 @@ package com.zxf.security.core.properties;
  */
 public class BrowserProperties {
 
-    private String loginPage = "/security-signIn.html";
+    private SessionProperties session = new SessionProperties();
+
+    private String signUpUrl = "/security-signUp.html";
+
+    private String loginPage = SecurityConstants.DEFAULT_LOGIN_PAGE_URL;
 
     private LoginType loginType = LoginType.JSON;
 
@@ -35,5 +39,21 @@ public class BrowserProperties {
 
     public void setRememberMeSeconds(int rememberMeSeconds) {
         this.rememberMeSeconds = rememberMeSeconds;
+    }
+
+    public SessionProperties getSession() {
+        return session;
+    }
+
+    public void setSession(SessionProperties session) {
+        this.session = session;
+    }
+
+    public String getSignUpUrl() {
+        return signUpUrl;
+    }
+
+    public void setSignUpUrl(String signUpUrl) {
+        this.signUpUrl = signUpUrl;
     }
 }

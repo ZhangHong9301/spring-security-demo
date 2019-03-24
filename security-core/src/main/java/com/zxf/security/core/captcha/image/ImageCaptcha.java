@@ -1,4 +1,6 @@
-package com.zxf.security.core.captcha;
+package com.zxf.security.core.captcha.image;
+
+import com.zxf.security.core.captcha.Captcha;
 
 import java.awt.image.BufferedImage;
 import java.time.LocalDateTime;

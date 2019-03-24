@@ -1,6 +1,7 @@
 package com.zxf.security.browser;
 
 import com.zxf.security.browser.support.SimpleResponse;
+import com.zxf.security.core.properties.SecurityConstants;
 import com.zxf.security.core.properties.SecurityProperties;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.RequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
+import org.springframework.social.connect.web.ProviderSignInUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,6 +38,9 @@ public class BrowserSecurityController {
     @Autowired
     private SecurityProperties securityProperties;
 
+    @Autowired
+    private ProviderSignInUtils providerSignInUtils;
+
     /**
      * 当需要身份认证时，跳转到这里
      *
@@ -43,7 +48,7 @@ public class BrowserSecurityController {
      * @param response
      * @return
      */
-    @GetMapping("/authentication/require")
+    @GetMapping(SecurityConstants.DEFAULT_UNAUTHENTICATION_URL)
     @ResponseStatus(code = HttpStatus.UNAUTHORIZED) /*未授权状态码*/
     public SimpleResponse requireAuthentication(HttpServletRequest request, HttpServletResponse response) throws IOException {
 

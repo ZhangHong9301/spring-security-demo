@@ -10,7 +10,7 @@ public class SmsCaptchaProperties {
 
     private int expireIn = 100;
 
-    private String url;
+    private String url="";
 
 
     public int getLength() {

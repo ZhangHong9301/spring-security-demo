@@ -1,5 +1,6 @@
 package com.zxf.security.core.captcha;
 
+import com.zxf.security.core.captcha.image.ImageCaptchaGenerator;
 import com.zxf.security.core.captcha.sms.DefaultSmsCaptchaSender;
 import com.zxf.security.core.captcha.sms.SmsCaptchaSender;
 import com.zxf.security.core.properties.SecurityProperties;

@@ -1,38 +1,35 @@
 package com.zxf.security.browser;
 
-import com.zxf.security.core.captcha.CaptchaFilter;
+import com.zxf.security.core.authentication.mobile.SmsCaptchaAuthenticationSecurityConfig;
+import com.zxf.security.core.captcha.CaptchaSecurityConfig;
+import com.zxf.security.core.properties.SecurityConstants;
 import com.zxf.security.core.properties.SecurityProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.security.web.session.InvalidSessionStrategy;
+import org.springframework.security.web.session.SessionInformationExpiredStrategy;
+import org.springframework.social.security.SpringSocialConfigurer;
 
 import javax.sql.DataSource;
+
+import com.zxf.security.core.authentication.AbstractChannelSecurityConfig;
 
 /**
  * Create by Mr.ZXF
  * on 2019-03-21 11:45
  */
 @Configuration
-public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
+public class BrowserSecurityConfig extends AbstractChannelSecurityConfig {
 
     @Autowired
     private SecurityProperties securityProperties;
-
-    @Autowired
-    private AuthenticationSuccessHandler myAuthenticationSuccessHandler;
-
-    @Autowired
-    private AuthenticationFailureHandler myAuthenticationFailureHandler;
 
     @Autowired
     private DataSource dataSource;
@@ -40,46 +37,72 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserDetailsService userDetailsService;
 
+    @Autowired
+    private SmsCaptchaAuthenticationSecurityConfig smsCaptchaAuthenticationSecurityConfig;
+
+    @Autowired
+    private CaptchaSecurityConfig captchaSecurityConfig;
+
+    @Autowired
+    private SessionInformationExpiredStrategy sessionInformationExpiredStrategy;
+
+    @Autowired
+    private SpringSocialConfigurer mySocialSecurityConfig;
+
+    @Autowired
+    private InvalidSessionStrategy invalidSessionStrategy;
+
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public PersistentTokenRepository persistentTokenRepository(){
+    public PersistentTokenRepository persistentTokenRepository() {
         JdbcTokenRepositoryImpl tokenRepository = new JdbcTokenRepositoryImpl();
         tokenRepository.setDataSource(dataSource);
-        // tokenRepository.setCreateTableOnStartup(true);
+        //tokenRepository.setCreateTableOnStartup(true);
         return tokenRepository;
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        CaptchaFilter captchaFilter = new CaptchaFilter();
-        captchaFilter.setAuthenticationFailureHandler(myAuthenticationFailureHandler);
-        captchaFilter.setSecurityProperties(securityProperties);
-        captchaFilter.afterPropertiesSet();
+        applyPasswordAuthenticationConfig(http);
 
-        http.addFilterBefore(captchaFilter, UsernamePasswordAuthenticationFilter.class)
-                .formLogin()
-                    .loginPage("/authentication/require")
-                    .loginProcessingUrl("/authentication/form")
-                    .successHandler(myAuthenticationSuccessHandler)
-                    .failureHandler(myAuthenticationFailureHandler)
-                    .and()
-                .rememberMe()
-                    .tokenRepository(persistentTokenRepository())
-                    .tokenValiditySeconds(securityProperties.getBrowser().getRememberMeSeconds())
-                    .userDetailsService(userDetailsService)
-                    .and()
-                .authorizeRequests() /*授权配置*/
-                .antMatchers("/authentication/require",
+        http.apply(captchaSecurityConfig)
+                .and()
+            .apply(smsCaptchaAuthenticationSecurityConfig)
+                .and()
+            .apply(mySocialSecurityConfig)
+                .and()
+            .rememberMe()
+                .tokenRepository(persistentTokenRepository())
+                .tokenValiditySeconds(securityProperties.getBrowser().getRememberMeSeconds())
+                .userDetailsService(userDetailsService)
+                .and()
+            .sessionManagement()
+                .invalidSessionStrategy(invalidSessionStrategy)
+                .maximumSessions(securityProperties.getBrowser().getSession().getMaximumSessions())
+                .maxSessionsPreventsLogin(securityProperties.getBrowser().getSession().isMaxSessionsPreventsLogin())
+                .expiredSessionStrategy(sessionInformationExpiredStrategy)
+                .and()
+                .and()
+            .authorizeRequests() /*授权配置*/
+                .antMatchers(
+                        SecurityConstants.DEFAULT_UNAUTHENTICATION_URL,
+                        SecurityConstants.DEFAULT_LOGIN_PROCESSING_URL_MOBILE,
                         securityProperties.getBrowser().getLoginPage(),
-                        "/captcha/image").permitAll()
+                        SecurityConstants.DEFAULT_CAPTCHA_URL_PREFIX+"/*",
+                        securityProperties.getBrowser().getSignUpUrl(),
+                        securityProperties.getBrowser().getSession().getSessionInvalidUrl()+".json",
+                        securityProperties.getBrowser().getSession().getSessionInvalidUrl()+".html",
+                        "/user/regist" )
+                        .permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
-                .csrf().disable();
+            .csrf().disable();
+
     }
 }

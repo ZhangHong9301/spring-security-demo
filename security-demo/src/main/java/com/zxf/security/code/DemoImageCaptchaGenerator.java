@@ -1,8 +1,7 @@
 package com.zxf.security.code;
 
 import com.zxf.security.core.captcha.CaptchaGenerator;
-import com.zxf.security.core.captcha.ImageCaptcha;
-import org.springframework.stereotype.Component;
+import com.zxf.security.core.captcha.image.ImageCaptcha;
 import org.springframework.web.context.request.ServletWebRequest;
 
 /**

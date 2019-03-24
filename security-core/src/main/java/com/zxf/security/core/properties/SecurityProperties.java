@@ -13,6 +13,8 @@ public class SecurityProperties {
 
     private CaptchaProperties captcha = new CaptchaProperties();
 
+    private SocialProperties social = new SocialProperties();
+
     public BrowserProperties getBrowser() {
         return browser;
     }
@@ -27,5 +29,13 @@ public class SecurityProperties {
 
     public void setCaptcha(CaptchaProperties captcha) {
         this.captcha = captcha;
+    }
+
+    public SocialProperties getSocial() {
+        return social;
+    }
+
+    public void setSocial(SocialProperties social) {
+        this.social = social;
     }
 }
