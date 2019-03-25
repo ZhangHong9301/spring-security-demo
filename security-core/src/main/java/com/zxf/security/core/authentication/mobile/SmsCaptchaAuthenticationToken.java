@@ -19,9 +19,9 @@ public class SmsCaptchaAuthenticationToken extends AbstractAuthenticationToken {
     // ===================================================================================================
 
     /**
-     * This constructor can be safely used by any code that wishes to create a
-     * <code>UsernamePasswordAuthenticationToken</code>, as the {@link #isAuthenticated()}
-     * will return <code>false</code>.
+     * This constructor can be safely used by any captcha that wishes to create a
+     * <captcha>UsernamePasswordAuthenticationToken</captcha>, as the {@link #isAuthenticated()}
+     * will return <captcha>false</captcha>.
      */
     public SmsCaptchaAuthenticationToken(String mobile) {
         super(null);
@@ -30,9 +30,9 @@ public class SmsCaptchaAuthenticationToken extends AbstractAuthenticationToken {
     }
 
     /**
-     * This constructor should only be used by <code>AuthenticationManager</code> or
-     * <code>AuthenticationProvider</code> implementations that are satisfied with
-     * producing a trusted (i.e. {@link #isAuthenticated()} = <code>true</code>)
+     * This constructor should only be used by <captcha>AuthenticationManager</captcha> or
+     * <captcha>AuthenticationProvider</captcha> implementations that are satisfied with
+     * producing a trusted (i.e. {@link #isAuthenticated()} = <captcha>true</captcha>)
      * authentication token.
      *
      * @param principal

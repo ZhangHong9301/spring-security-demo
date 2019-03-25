@@ -1,4 +1,4 @@
-package com.zxf.security.code;
+package com.zxf.security.captcha;
 
 import com.zxf.security.core.captcha.CaptchaGenerator;
 import com.zxf.security.core.captcha.image.ImageCaptcha;

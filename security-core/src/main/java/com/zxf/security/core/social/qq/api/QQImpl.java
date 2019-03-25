@@ -20,7 +20,7 @@ public class QQImpl extends AbstractOAuth2ApiBinding implements QQ {
     private ObjectMapper objectMapper = new ObjectMapper();
 
     public QQImpl(String accessToken, String appId) {
-        super(accessToken, TokenStrategy.ACCESS_TOKEN_PARAMETER);
+        super(accessToken, TokenStrategy.ACCESS_TOKEN_PARAMETER); /*把accessToken作为参数处理*/
 
         this.appId = appId;
 
@@ -35,7 +35,7 @@ public class QQImpl extends AbstractOAuth2ApiBinding implements QQ {
     }
 
     @Override
-    public QQUserInfo getQQUserInfo() throws IOException {
+    public QQUserInfo getQQUserInfo(){
 
         String url = String.format(URL_GET_USERINFO, appId, openId);
 
@@ -43,6 +43,10 @@ public class QQImpl extends AbstractOAuth2ApiBinding implements QQ {
 
         System.out.println(result);
 
-        return objectMapper.readValue(result, QQUserInfo.class);
+        try {
+            return objectMapper.readValue(result, QQUserInfo.class);
+        } catch (IOException e) {
+            throw new RuntimeException("获取用户信息失败",e);
+        }
     }
 }

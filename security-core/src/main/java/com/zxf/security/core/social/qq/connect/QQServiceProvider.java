@@ -1,4 +1,4 @@
-package com.zxf.security.core.social.qq.api.connet;
+package com.zxf.security.core.social.qq.connect;
 
 import com.zxf.security.core.social.qq.api.QQ;
 import com.zxf.security.core.social.qq.api.QQImpl;

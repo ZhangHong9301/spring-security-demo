@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
+import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -91,7 +92,8 @@ public class CaptchaFilter extends OncePerRequestFilter implements InitializingB
         if (type != null) {
             logger.info("校验请求(" + request.getRequestURI() + ")中的验证码,验证码类型" + type);
             try {
-                captchaProcessorHolder.findCaptchaProcessor(type);
+                captchaProcessorHolder.findCaptchaProcessor(type).validate(new ServletWebRequest(request,response));
+                logger.info("验证码校验通过");
             } catch (CaptchaException e) {
                 authenticationFailureHandler.onAuthenticationFailure(request, response, e);
                 return;

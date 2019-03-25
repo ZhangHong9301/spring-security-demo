@@ -42,7 +42,7 @@ public class MyUserDetailsService implements UserDetailsService, SocialUserDetai
 
 	@Override
 	public SocialUserDetails loadUserByUserId(String userId) throws UsernameNotFoundException {
-		logger.info("设计登录用户Id:" + userId);
+		logger.info("社交登录用户Id:" + userId);
 		return buildUser(userId);
 	}
 

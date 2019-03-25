@@ -37,6 +37,7 @@ public class FileController {
 
         try (InputStream inputStream = new FileInputStream(new File(folder, id + ".txt"));
              OutputStream outputStream = response.getOutputStream()) {
+
             response.setContentType("application/x-download");
             response.addHeader("Content-Disposition", "attachment;filename=test.txt");
             IOUtils.copy(inputStream, outputStream);
