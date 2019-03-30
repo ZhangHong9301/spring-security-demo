@@ -5,12 +5,13 @@ package com.zxf.security.security;
 
 import org.springframework.social.connect.Connection;
 import org.springframework.social.connect.ConnectionSignUp;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Mr.ZXF
  *
  */
-//@Component
+@Component
 public class DemoConnectionSignUp implements ConnectionSignUp {
 
 	/* (non-Javadoc)

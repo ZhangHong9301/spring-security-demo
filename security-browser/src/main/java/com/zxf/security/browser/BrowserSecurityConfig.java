@@ -47,7 +47,7 @@ public class BrowserSecurityConfig extends AbstractChannelSecurityConfig {
     private SessionInformationExpiredStrategy sessionInformationExpiredStrategy;
 
     @Autowired
-    private SpringSocialConfigurer mySocialSecurityConfig;
+    private SpringSocialConfigurer mySpringSocialConfigurer;
 
     @Autowired
     private InvalidSessionStrategy invalidSessionStrategy;
@@ -74,7 +74,7 @@ public class BrowserSecurityConfig extends AbstractChannelSecurityConfig {
                 .and()
             .apply(smsCaptchaAuthenticationSecurityConfig)
                 .and()
-            .apply(mySocialSecurityConfig)
+            .apply(mySpringSocialConfigurer)
                 .and()
             .rememberMe()
                 .tokenRepository(persistentTokenRepository())
