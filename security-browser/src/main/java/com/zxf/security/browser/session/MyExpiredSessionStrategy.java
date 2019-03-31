@@ -28,7 +28,7 @@ public class MyExpiredSessionStrategy extends AbstractSessionStrategy implements
 	}
 	
 	/* (non-Javadoc)
-	 * @see com.imooc.security.browser.session.AbstractSessionStrategy#isConcurrency()
+	 * @see com.zxf.security.browser.session.AbstractSessionStrategy#isConcurrency()
 	 */
 	@Override
 	protected boolean isConcurrency() {
