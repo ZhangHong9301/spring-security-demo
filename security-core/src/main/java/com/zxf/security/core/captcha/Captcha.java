@@ -1,13 +1,15 @@
 package com.zxf.security.core.captcha;
 
-import java.awt.image.BufferedImage;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
  * Create by Mr.ZXF
  * on 2019-03-22 10:49
  */
-public class Captcha {
+public class Captcha implements Serializable {
+
+    private static final long serialVersionUID = -2851720637148993610L;
 
     private String captcha;
 

@@ -11,6 +11,9 @@ import java.time.LocalDateTime;
  */
 public class ImageCaptcha extends Captcha {
 
+    private static final long serialVersionUID = 3509143183613838122L;
+
+    /*不需要放入Redis*/
     private BufferedImage image;
 
     public ImageCaptcha(BufferedImage image, String captcha, int expireIn) {
