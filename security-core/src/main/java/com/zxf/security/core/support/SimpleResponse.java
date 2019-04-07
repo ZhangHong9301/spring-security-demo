@@ -1,4 +1,4 @@
-package com.zxf.security.browser.support;
+package com.zxf.security.core.support;
 
 /**
  * Create by Mr.ZXF

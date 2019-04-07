@@ -1,17 +1,24 @@
 package com.zxf.security.web.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zxf.security.core.properties.SecurityProperties;
 import com.zxf.security.dto.User;
 import com.zxf.security.dto.UserQueryCondition;
+import com.zxf.security.service.UserService;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.Authentication;
 import org.springframework.social.connect.web.ProviderSignInUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -19,8 +26,11 @@ import org.springframework.web.context.request.ServletWebRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Create by Mr.ZXF
@@ -33,6 +43,28 @@ public class UserController {
     @Autowired
     private ProviderSignInUtils providerSignInUtils;
 
+    @Autowired
+    private SecurityProperties securityProperties;
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Autowired
+    private UserService userService;
+
+    @GetMapping("/list")
+    public String userList() throws IOException {
+        List<Map<String, Object>> userList = userService.userList();
+        return objectMapper.writeValueAsString(userList);
+    }
+    @GetMapping("/permission")
+    public String userPermission() throws IOException {
+        List<Map<String, Object>> userList = userService.userPermission();
+        return objectMapper.writeValueAsString(userList);
+    }
+
     @GetMapping("/regist")
     public void regist(User user, HttpServletRequest request) {
 
@@ -42,7 +74,18 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public Object getCurrentUser(@AuthenticationPrincipal UserDetails user) {
+    public Object getCurrentUser(Authentication user,HttpServletRequest request) throws UnsupportedEncodingException {
+
+        String header = request.getHeader("Authorization");
+        String token = StringUtils.substringAfter(header,"Bearer ");
+
+        Claims claims = Jwts.parser().setSigningKey(securityProperties.getOauth2().getJwtSigningKey().getBytes("UTF-8"))
+                .parseClaimsJws(token).getBody();
+
+        String company = (String) claims.get("company");
+
+        logger.info("---> " + company);
+
         return user;
     }
 

@@ -28,6 +28,8 @@ public abstract class AbstractCaptchaProcessor<C extends Captcha> implements Cap
     @Autowired
     private Map<String, CaptchaGenerator> captchaGenerators;
 
+    @Autowired
+    private CaptchaRepository captchaRepository;
 
     /**
      * (non-Javadoc)
@@ -71,7 +73,8 @@ public abstract class AbstractCaptchaProcessor<C extends Captcha> implements Cap
         logger.info("Save SessionKey is " + getSessionKey(request));
         /*只把编码和过期时间存入session中*/
         Captcha captcha1 = new Captcha(captcha.getCaptcha(),captcha.getExpireTime());
-        sessionStrategy.setAttribute(request, getSessionKey(request), captcha1);
+        captchaRepository.save(request,captcha1,getCaptchaType(request));
+        //sessionStrategy.setAttribute(request, getSessionKey(request), captcha1);
     }
 
     /**
@@ -108,37 +111,40 @@ public abstract class AbstractCaptchaProcessor<C extends Captcha> implements Cap
     @Override
     public void validate(ServletWebRequest request) {
 
-        CaptchaType processorType = getCaptchaType(request);
+        CaptchaType captchaType = getCaptchaType(request);
         String sessionKey = getSessionKey(request);
 
         logger.info("=====验证sessionKey ：" + sessionKey);
-        C captchaInSession = (C) sessionStrategy.getAttribute(request, sessionKey);
+        //C captchaInSession = (C) sessionStrategy.getAttribute(request, sessionKey);
+        C captchaInSession = (C) captchaRepository.get(request, captchaType);
 
         String captchaInRequest;
         try {
             captchaInRequest = ServletRequestUtils.getStringParameter(request.getRequest(),
-                    processorType.getParamNameOnValidate());
+                    captchaType.getParamNameOnValidate());
         } catch (ServletRequestBindingException e) {
             throw new CaptchaException("获取验证码的值失败");
         }
 
         if (StringUtils.isBlank(captchaInRequest)) {
-            throw new CaptchaException(processorType + "验证码的值不能为空");
+            throw new CaptchaException(captchaType + "验证码的值不能为空");
         }
 
         if (captchaInSession == null) {
-            throw new CaptchaException(processorType + "验证码不存在");
+            throw new CaptchaException(captchaType + "验证码不存在");
         }
 
         if (captchaInSession.isExpried()) {
-            sessionStrategy.removeAttribute(request, sessionKey);
-            throw new CaptchaException(processorType + "验证码已过期");
+            //sessionStrategy.removeAttribute(request, sessionKey);
+            captchaRepository.remove(request,captchaType);
+            throw new CaptchaException(captchaType + "验证码已过期");
         }
 
         if (!StringUtils.equals(captchaInSession.getCaptcha(), captchaInRequest)) {
-            throw new CaptchaException(processorType + "验证码不匹配");
+            throw new CaptchaException(captchaType + "验证码不匹配");
         }
 
-        sessionStrategy.removeAttribute(request, sessionKey);
+        //sessionStrategy.removeAttribute(request, sessionKey);
+        captchaRepository.remove(request,captchaType);
     }
 }

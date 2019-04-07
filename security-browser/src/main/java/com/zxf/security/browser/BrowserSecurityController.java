@@ -1,9 +1,9 @@
 package com.zxf.security.browser;
 
-import com.zxf.security.browser.support.SimpleResponse;
 import com.zxf.security.browser.support.SocialUserInfo;
 import com.zxf.security.core.properties.SecurityConstants;
 import com.zxf.security.core.properties.SecurityProperties;
+import com.zxf.security.core.support.SimpleResponse;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

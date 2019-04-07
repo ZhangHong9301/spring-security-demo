@@ -1,6 +1,9 @@
 package com.zxf.security.browser;
 
 import com.zxf.security.core.authentication.mobile.SmsCaptchaAuthenticationSecurityConfig;
+import com.zxf.security.core.authorize.AuthorizeConfigManager;
+import com.zxf.security.core.authorize.AuthorizeConfigProvider;
+import com.zxf.security.core.authorize.MyAuthorizeConfigProvider;
 import com.zxf.security.core.captcha.CaptchaSecurityConfig;
 import com.zxf.security.core.properties.SecurityConstants;
 import com.zxf.security.core.properties.SecurityProperties;
@@ -56,10 +59,10 @@ public class BrowserSecurityConfig extends AbstractChannelSecurityConfig {
     @Autowired
     private LogoutSuccessHandler logoutSuccessHandler;
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+    @Autowired
+    private AuthorizeConfigManager authorizeConfigManager;
+
+
 
     @Bean
     public PersistentTokenRepository persistentTokenRepository() {
@@ -98,21 +101,10 @@ public class BrowserSecurityConfig extends AbstractChannelSecurityConfig {
                 /*清除浏览器中的cookies*/
                 .deleteCookies("JSESSIONID")
                 .and()
-            .authorizeRequests() /*授权配置*/
-                .antMatchers(
-                        SecurityConstants.DEFAULT_UNAUTHENTICATION_URL,
-                        SecurityConstants.DEFAULT_LOGIN_PROCESSING_URL_MOBILE,
-                        securityProperties.getBrowser().getLoginPage(),
-                        SecurityConstants.DEFAULT_CAPTCHA_URL_PREFIX+"/*",
-                        securityProperties.getBrowser().getSignUpUrl(),
-                        securityProperties.getBrowser().getSession().getSessionInvalidUrl()+".json",
-                        securityProperties.getBrowser().getSession().getSessionInvalidUrl()+".html",
-                        securityProperties.getBrowser().getSignOutUrl(),
-                        "/user/regist").permitAll()
-                .anyRequest()
-                .authenticated()
-                .and()
+
             .csrf().disable();
+
+        authorizeConfigManager.config(http.authorizeRequests());
 
     }
 }
