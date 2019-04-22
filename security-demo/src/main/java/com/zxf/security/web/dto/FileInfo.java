@@ -1,4 +1,4 @@
-package com.zxf.security.dto;
+package com.zxf.security.web.dto;
 
 /**
  * Create by Mr.ZXF

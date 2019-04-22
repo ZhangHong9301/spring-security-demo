@@ -1,6 +1,6 @@
 package com.zxf.security.web.controller;
 
-import com.zxf.security.dto.FileInfo;
+import com.zxf.security.web.dto.FileInfo;
 import org.apache.commons.io.IOUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;

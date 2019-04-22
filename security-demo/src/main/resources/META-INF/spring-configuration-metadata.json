@@ -1,0 +1,53 @@
+{
+
+  "hints":[{
+
+    "name":"zxf.security.social.filter-processes-url",
+
+    "values":[{
+
+      "value":"/qqLogin",
+
+      "description":"拦截地址"
+
+    }]
+
+  }],
+
+  "groups":[
+
+    {
+
+      "sourceType": "com.zxf.security.core.properties.SecurityProperties",
+
+      "name": "zxf.security.browser",
+
+      "type": "com.zxf.security.core.properties.BrowserProperties"
+
+    }],
+
+  "properties":[
+
+    {
+
+      "sourceType": "com.zxf.security.core.properties.SecurityProperties",
+
+      "name": "zxf.security.browser.sign-up-url",
+
+      "type": "java.lang.String",
+
+      "description": "注册地址",
+
+      "defaultValue": "/demo-signUp.html"
+
+    },{
+      "sourceType": "com.zxf.security.core.properties.SecurityProperties",
+
+      "name": "zxf.security.social.filter-processes-url",
+
+      "type": "java.lang.String",
+
+      "description": "拦截地址"
+    }]
+
+}

@@ -1,4 +1,4 @@
-package com.zxf.security.dto;
+package com.zxf.security.web.dto;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.zxf.security.validator.MyConstraint;
@@ -26,7 +26,7 @@ public class User {
      * 用户名
      */
 
-    @MyConstraint(message = "这是一个测试")
+    //@MyConstraint(message = "这是一个测试")
     private String userName;
 
 

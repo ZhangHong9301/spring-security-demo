@@ -53,6 +53,7 @@
         <module>../security-browser</module>
         <module>../security-core</module>
         <module>../security-demo</module>
+        <module>../security-authorize</module>
     </modules>
     
 </project>

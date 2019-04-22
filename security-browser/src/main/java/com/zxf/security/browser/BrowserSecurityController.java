@@ -59,11 +59,11 @@ public class BrowserSecurityController {
 
         if (savedRequest != null) {
             String targetUrl = savedRequest.getRedirectUrl();
-            logger.info("引发跳转的请求是： " + targetUrl);
+            logger.info("引发跳转的请求是: [{}]", targetUrl);
 
-            if (StringUtils.endsWithIgnoreCase(targetUrl,".html")) {
+            if (StringUtils.endsWithIgnoreCase(targetUrl, ".html")) {
                 /*如果是网页请求重定向到指定URL*/
-                redirectStrategy.sendRedirect(request,response,securityProperties.getBrowser().getLoginPage());
+                redirectStrategy.sendRedirect(request, response, securityProperties.getBrowser().getLoginPage());
             }
         }
         /*反之则返回相应状态码及json字符串信息*/
