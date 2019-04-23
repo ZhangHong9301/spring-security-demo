@@ -13,11 +13,11 @@ public class RespResult implements Serializable {
 
     private Object data;
 
-    public RespResult(String msg){
+    private RespResult(String msg){
         this.msg = msg;
     }
 
-    public RespResult(RespResultEnums enums) {
+    private RespResult(RespResultEnums enums) {
         this.code = enums.getCode();
         this.msg = enums.getMessage();
     }

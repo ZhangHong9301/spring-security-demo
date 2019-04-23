@@ -70,7 +70,6 @@ public abstract class AbstractCaptchaProcessor<C extends Captcha> implements Cap
      * @param captcha
      */
     private void save(ServletWebRequest request, C captcha) {
-        logger.info("Save SessionKey is " + getSessionKey(request));
         /*只把编码和过期时间存入session中*/
         Captcha captcha1 = new Captcha(captcha.getCaptcha(),captcha.getExpireTime());
         captchaRepository.save(request,captcha1,getCaptchaType(request));
@@ -97,24 +96,12 @@ public abstract class AbstractCaptchaProcessor<C extends Captcha> implements Cap
         return CaptchaType.valueOf(type.toUpperCase());
     }
 
-    /**
-     * 构建验证码放入session时的key
-     *
-     * @param request
-     * @return
-     */
-    private String getSessionKey(ServletWebRequest request) {
-        return SESSION_KEY_PREFIX + getCaptchaType(request).toString().toUpperCase();
-    }
-
     @SuppressWarnings("unchecked")
     @Override
     public void validate(ServletWebRequest request) {
 
         CaptchaType captchaType = getCaptchaType(request);
-        String sessionKey = getSessionKey(request);
 
-        logger.info("=====验证sessionKey ：" + sessionKey);
         //C captchaInSession = (C) sessionStrategy.getAttribute(request, sessionKey);
         C captchaInSession = (C) captchaRepository.get(request, captchaType);
 
