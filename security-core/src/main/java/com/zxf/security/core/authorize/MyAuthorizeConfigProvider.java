@@ -28,4 +28,6 @@ public class MyAuthorizeConfigProvider implements AuthorizeConfigProvider {
                 securityProperties.getBrowser().getSignOutUrl())
                 .permitAll();
     }
+
+
 }

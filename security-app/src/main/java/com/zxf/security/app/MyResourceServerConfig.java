@@ -43,7 +43,7 @@ public class MyResourceServerConfig extends ResourceServerConfigurerAdapter {
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http.formLogin()
-                .loginPage(SecurityConstants.DEFAULT_LOGIN_PAGE_URL)
+                .loginPage(securityProperties.getBrowser().getLoginPage())
                 .loginProcessingUrl(SecurityConstants.DEFAULT_LOGIN_PROCESSING_URL_FORM)
                 .successHandler(myAuthenticationSuccessHandler)
                 .failureHandler(myAuthenticationFailureHandler);

@@ -12,7 +12,7 @@
     </parent>
 
     <dependencies>
-        <!--<dependency>
+<!--        <dependency>
             <groupId>com.zxf.security</groupId>
             <artifactId>security-browser</artifactId>
             <version>${security.version}</version>
