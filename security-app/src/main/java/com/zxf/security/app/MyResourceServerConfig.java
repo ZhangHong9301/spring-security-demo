@@ -50,12 +50,13 @@ public class MyResourceServerConfig extends ResourceServerConfigurerAdapter {
 
         http.apply(captchaSecurityConfig)
                 .and()
-             .apply(smsCaptchaAuthenticationSecurityConfig)
+                .apply(smsCaptchaAuthenticationSecurityConfig)
                 .and()
-             .apply(mySpringSocialConfigurer)
+                .apply(mySpringSocialConfigurer)
                 .and()
-
-             .csrf().disable();
+                /*.cors()
+                .and()*/
+                .csrf().disable();
 
         authorizeConfigManager.config(http.authorizeRequests());
     }

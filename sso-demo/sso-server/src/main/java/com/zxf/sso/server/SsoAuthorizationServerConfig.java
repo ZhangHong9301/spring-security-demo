@@ -20,13 +20,14 @@ public class SsoAuthorizationServerConfig extends AuthorizationServerConfigurerA
         clients.inMemory()
                 .withClient("test1")
                 .secret("secret1")
-                .authorizedGrantTypes("authorization_code","password","refresh_token")
-                .scopes("all")
+                .authorizedGrantTypes("authorization_code", "password", "refresh_token")
+                .scopes("all").autoApprove(true)
                 .and()
                 .withClient("test2")
                 .secret("secret2")
-                .authorizedGrantTypes("authorization_code","password","refresh_token")
-                .scopes("all");
+                .authorizedGrantTypes("authorization_code", "password", "refresh_token")
+                .scopes("all")
+                .autoApprove(true);
 
     }
 
@@ -42,12 +43,12 @@ public class SsoAuthorizationServerConfig extends AuthorizationServerConfigurerA
     }
 
     @Bean
-    public TokenStore jwtTokenStroe(){
+    public TokenStore jwtTokenStroe() {
         return new JwtTokenStore(jwtAccessTokenConverter());
     }
 
     @Bean
-    public JwtAccessTokenConverter jwtAccessTokenConverter(){
+    public JwtAccessTokenConverter jwtAccessTokenConverter() {
         JwtAccessTokenConverter accessTokenConverter = new JwtAccessTokenConverter();
         accessTokenConverter.setSigningKey("zxf"); /*密签的密钥*/
         return accessTokenConverter;
