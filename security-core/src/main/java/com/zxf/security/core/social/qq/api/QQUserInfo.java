@@ -1,5 +1,8 @@
 package com.zxf.security.core.social.qq.api;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class QQUserInfo {
 
     private String ret;    /*返回码*/

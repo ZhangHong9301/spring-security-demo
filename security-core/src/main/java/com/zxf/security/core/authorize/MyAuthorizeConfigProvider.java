@@ -25,7 +25,9 @@ public class MyAuthorizeConfigProvider implements AuthorizeConfigProvider {
                 securityProperties.getBrowser().getSignUpUrl(),
                 securityProperties.getBrowser().getSession().getSessionInvalidUrl() + ".json",
                 securityProperties.getBrowser().getSession().getSessionInvalidUrl() + ".html",
-                securityProperties.getBrowser().getSignOutUrl())
+                securityProperties.getBrowser().getSignOutUrl(),
+                securityProperties.getSocial().getFilterProcessesUrl() + "/*",
+                "/user/regist")
                 .permitAll();
     }
 

@@ -27,7 +27,7 @@ public class User {
      */
 
     //@MyConstraint(message = "这是一个测试")
-    private String userName;
+    private String username;
 
 
     /**
@@ -55,12 +55,12 @@ public class User {
     }
 
     @JsonView(UserSimpleView.class)
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     @JsonView(UserDetailView.class)

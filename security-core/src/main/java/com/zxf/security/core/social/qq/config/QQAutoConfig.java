@@ -14,6 +14,7 @@ import org.springframework.social.connect.ConnectionFactory;
  * on 2019-03-25 14:26
  */
 @Configuration
+//系统中配了appid时当前配置才生效
 @ConditionalOnProperty(prefix = "zxf.security.social.qq",name = "app-id")
 public class QQAutoConfig extends SocialAutoConfigurerAdapter{
 

@@ -71,11 +71,12 @@ public class UserController {
         return objectMapper.writeValueAsString(userList);
     }
 
-    @GetMapping("/regist")
+    @PostMapping("/regist")
     public void regist(User user, HttpServletRequest request) {
 
         //注册用户
-        String userId = user.getUserName();
+        String userId = user.getUsername();
+
         providerSignInUtils.doPostSignUp(userId, new ServletWebRequest(request));
     }
 
@@ -102,7 +103,7 @@ public class UserController {
             errors.getAllErrors().stream().forEach(resources.error -> System.out.println(resources.error.getDefaultMessage()));
         }*/
         logger.info("user.getId():[{}]", user.getId());
-        logger.info("user.getUserName():[{}]", user.getUserName());
+        logger.info("user.getUserName():[{}]", user.getUsername());
         logger.info("user.getPassword():[{}]", user.getPassword());
         logger.info("user.getBirthday():[{}]", user.getBirthday());
         user.setId("1");
@@ -118,7 +119,7 @@ public class UserController {
         }
 
         logger.info("user.getId():[{}]", user.getId());
-        logger.info("user.getUserName():[{}]", user.getUserName());
+        logger.info("user.getUserName():[{}]", user.getUsername());
         logger.info("user.getPassword():[{}]", user.getPassword());
         logger.info("user.getBirthday():[{}]", user.getBirthday());
         user.setId("1");
@@ -153,7 +154,7 @@ public class UserController {
         // throw new RuntimeException("user not exist");
         logger.info("===========进入getInfo服务=========");
         User user = new User();
-        user.setUserName("tom");
+        user.setUsername("tom");
         return user;
     }
 
