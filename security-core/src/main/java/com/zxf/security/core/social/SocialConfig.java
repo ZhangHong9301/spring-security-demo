@@ -5,8 +5,10 @@ package com.zxf.security.core.social;
 
 import com.zxf.security.core.properties.SecurityProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.crypto.encrypt.Encryptors;
 import org.springframework.social.config.annotation.EnableSocial;
 import org.springframework.social.config.annotation.SocialConfigurerAdapter;
@@ -25,6 +27,7 @@ import javax.sql.DataSource;
  */
 @Configuration
 @EnableSocial
+// @Order(Integer.MIN_VALUE)
 public class SocialConfig extends SocialConfigurerAdapter {
 
 	@Autowired

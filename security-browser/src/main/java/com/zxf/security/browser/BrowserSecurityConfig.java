@@ -39,7 +39,7 @@ public class BrowserSecurityConfig extends AbstractChannelSecurityConfig {
     private DataSource dataSource;
 
     @Autowired
-    private UserDetailsService userDetailsService;
+    private UserDetailsService myUserDetailsService;
 
     @Autowired
     private SmsCaptchaAuthenticationSecurityConfig smsCaptchaAuthenticationSecurityConfig;
@@ -51,7 +51,7 @@ public class BrowserSecurityConfig extends AbstractChannelSecurityConfig {
     private SessionInformationExpiredStrategy sessionInformationExpiredStrategy;
 
     @Autowired
-    private SpringSocialConfigurer mySpringSocialConfigurer;
+    private SpringSocialConfigurer mySocialSecurityConfig;
 
     @Autowired
     private InvalidSessionStrategy invalidSessionStrategy;
@@ -81,12 +81,12 @@ public class BrowserSecurityConfig extends AbstractChannelSecurityConfig {
                 .and()
             .apply(smsCaptchaAuthenticationSecurityConfig)
                 .and()
-            .apply(mySpringSocialConfigurer)
+            .apply(mySocialSecurityConfig)
                 .and()
             .rememberMe()
                 .tokenRepository(persistentTokenRepository())
                 .tokenValiditySeconds(securityProperties.getBrowser().getRememberMeSeconds())
-                .userDetailsService(userDetailsService)
+                .userDetailsService(myUserDetailsService)
                 .and()
             .sessionManagement()
                 .invalidSessionStrategy(invalidSessionStrategy)
