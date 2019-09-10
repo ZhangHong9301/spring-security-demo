@@ -27,7 +27,7 @@ import javax.sql.DataSource;
  */
 @Configuration
 @EnableSocial
-// @Order(Integer.MIN_VALUE)
+@Order(Integer.MIN_VALUE)
 public class SocialConfig extends SocialConfigurerAdapter {
 
 	@Autowired
