@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
-@EnableAuthorizationServer  /*认证服务器*/
+@EnableAuthorizationServer  /*授权服务器*/
 public class MyAuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
     @Autowired
