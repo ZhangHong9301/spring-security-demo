@@ -88,7 +88,7 @@ public class UserController {
 
         Claims claims = Jwts.parser().setSigningKey(securityProperties.getOauth2().getJwtSigningKey().getBytes("UTF-8"))
                 .parseClaimsJws(token).getBody();
-
+        logger.info("claims : {}", claims.toString());
         String company = (String) claims.get("company");
 
         logger.info("company is {}", company);
@@ -165,7 +165,7 @@ public class UserController {
 
     @GetMapping("/fail")
     public RespResult fail(String test) {
-        return RespResult.fail(RespResultEnums.DATA_IS_WRONG,test);
+        return RespResult.fail(RespResultEnums.DATA_IS_WRONG, test);
     }
 
 }

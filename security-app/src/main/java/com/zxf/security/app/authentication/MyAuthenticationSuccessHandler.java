@@ -59,18 +59,18 @@ public class MyAuthenticationSuccessHandler extends SavedRequestAwareAuthenticat
         String[] tokens = extractAndDecodeHeader(header, request);
         assert tokens.length == 2;
 
-        String clinetId = tokens[0];
+        String clientId = tokens[0];
         String clientSecret = tokens[1];
 
-        ClientDetails clientDetails = clientDetailsService.loadClientByClientId(clinetId);
+        ClientDetails clientDetails = clientDetailsService.loadClientByClientId(clientId);
 
         if (clientDetails == null) {
-            throw new UnapprovedClientAuthenticationException("clientId对应的配置信息不存在：" + clinetId);
+            throw new UnapprovedClientAuthenticationException("clientId对应的配置信息不存在：" + clientId);
         } else if (!StringUtils.equals(clientDetails.getClientSecret(), clientSecret)) {
-            throw new UnapprovedClientAuthenticationException("clientSecret不匹配：" + clinetId);
+            throw new UnapprovedClientAuthenticationException("clientSecret不匹配：" + clientId);
         }
 
-        TokenRequest tokenRequest = new TokenRequest(MapUtils.EMPTY_MAP, clinetId, clientDetails.getScope(), "custom");
+        TokenRequest tokenRequest = new TokenRequest(MapUtils.EMPTY_MAP, clientId, clientDetails.getScope(), "custom");
 
         OAuth2Request oAuth2Request = tokenRequest.createOAuth2Request(clientDetails);
 

@@ -16,7 +16,7 @@ import java.util.List;
  * Create by Mr.ZXF
  * on 2019-03-20 10:39
  */
-@Configuration
+// @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter{
 
     @SuppressWarnings("unused")

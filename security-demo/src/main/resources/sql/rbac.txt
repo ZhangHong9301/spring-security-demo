@@ -1,44 +1,58 @@
+--mysql
 CREATE TABLE `sys_user` (
-  `id` varchar(36) NOT NULL COMMENT '主键',
-  `usercode` varchar(32) NOT NULL COMMENT '账号',
-  `username` varchar(64) NOT NULL COMMENT '姓名',
-  `password` varchar(32) NOT NULL COMMENT '密码',
-  `salt` varchar(64) DEFAULT NULL COMMENT '盐',
-  `locked` char(1) DEFAULT NULL COMMENT '账号是否锁定，1：锁定，0未锁定',
-  PRIMARY KEY (`id`)
+  `id` VARCHAR(36) NOT NULL COMMENT '主键',
+  `login_id` VARCHAR(64) NOT NULL COMMENT '用户id',
+  `username` VARCHAR(64) COMMENT '用户名称',
+  `password` VARCHAR(64) NOT NULL COMMENT '密码',
+  `phone` VARCHAR(18) COMMENT '联系方式',
+  `attempts`   TINYINT(1) DEFAULT 0 NOT NULL COMMENT '连续登录错误次数',
+  `enabled` TINYINT(1) DEFAULT 1 NOT NULL COMMENT '是否启用，1：启用，0：未启用',
+  `account_non_expired` TINYINT(1) DEFAULT 1 NOT NULL COMMENT '未过期,1：未过期，0：过期',
+  `account_non_locked` TINYINT(1) DEFAULT 1 NOT NULL COMMENT '未锁定，1：未锁定，0：锁定',
+  `credentials_non_expired` TINYINT(1) DEFAULT 1 NOT NULL COMMENT '凭据未过期，1：未过期，0：过期',
+  `create_date` TIMESTAMP DEFAULT now() NOT NULL COMMENT '注册时间',
+  `update_date` TIMESTAMP DEFAULT now() NOT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY (`login_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 comment='用户表';
 
 
 CREATE TABLE `sys_role` (
   `id` varchar(36) NOT NULL COMMENT '主键',
   `name` varchar(128) NOT NULL COMMENT '角色名称',
-  `available` char(1) DEFAULT NULL COMMENT '是否可用,1：可用，0不可用',
-  PRIMARY KEY (`id`)
+  `instructions` VARCHAR(128) COMMENT '角色说明',
+  `available` TINYINT(1) DEFAULT 1 NOT NULL COMMENT '是否可用,1：可用，0不可用',
+  `create_date` TIMESTAMP DEFAULT now() NOT NULL COMMENT '创建时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 comment='角色表';
 
 CREATE TABLE `sys_user_role` (
-  `id` varchar(36) NOT NULL COMMENT '主键',
-  `sys_user_id` varchar(32) NOT NULL COMMENT '用户ID',
-  `sys_role_id` varchar(32) NOT NULL COMMENT '角色ID',
+  `user_id` varchar(32) NOT NULL COMMENT '用户ID',
+  `role_id` varchar(32) NOT NULL COMMENT '角色ID',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 comment='用户角色关联表';
 
-CREATE TABLE `sys_permission` (
-  `id` bigint(20) NOT NULL COMMENT '主键',
-  `name` varchar(128) NOT NULL COMMENT '资源名称',
-  `type` varchar(32) NOT NULL COMMENT '资源类型：menu,button,',
-  `url` varchar(128) NOT NULL COMMENT '访问url地址',
- `method` varchar(10) NOT NULL COMMENT '请求方法',
-  `available` char(1) NOT NULL COMMENT '是否可用,1：可用，0不可用',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 comment='权限表';
+CREATE TABLE `sys_resource` (
+  `id` VARCHAR(36) NOT NULL COMMENT '主键',
+  `pid` VARCHAR(36) COMMENT '父节点id',
+  `name` VARCHAR(128) COMMENT '资源名称',
+  `instructions` VARCHAR(200) COMMENT '资源说明',
+  `type` VARCHAR(32) COMMENT '资源类型：MENU,BUTTON',
+  `url` VARCHAR(128) NOT NULL COMMENT '访问url',
+  `method` VARCHAR(10) COMMENT '请求方法',
+  `router` VARCHAR(32) COMMENT '路由',
+  `available` TINYINT(1) DEFAULT 1 NOT NULL COMMENT '是否可用,1：可用，0不可用',
+  `create_date` TIMESTAMP DEFAULT now() NOT NULL COMMENT '创建时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 comment='资源表';
 
-CREATE TABLE `sys_role_permission` (
-  `id` varchar(36) NOT NULL,
-  `sys_role_id` varchar(32) NOT NULL COMMENT '角色id',
-  `sys_permission_id` varchar(32) NOT NULL COMMENT '权限id',
+CREATE TABLE `sys_role_resource` (
+  `role_id` varchar(32) NOT NULL COMMENT '角色id',
+  `permission_id` varchar(32) NOT NULL COMMENT '资源id',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 comment='角色权限关联表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 comment='角色资源关联表';
 
 show tables;
 

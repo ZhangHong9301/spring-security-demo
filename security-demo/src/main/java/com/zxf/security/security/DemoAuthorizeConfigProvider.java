@@ -13,8 +13,9 @@ public class DemoAuthorizeConfigProvider implements AuthorizeConfigProvider {
 
     @Override
     public void config(ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry config) {
-        //config.anyRequest().access("@rbacService.hasPermission(request,authentication)");  /*anyRequest一定得在最后被加载*/
-        // config.anyRequest().permitAll();
-        config.anyRequest().authenticated();
+        // config.anyRequest().access("@rbacService.hasPermission(request,authentication)");  /*anyRequest一定得在最后被加载*/
+        config.anyRequest().permitAll();
+        // config.anyRequest().authenticated();
+        // config.anyRequest().access("@myAuthorization.hasPermission(request,authentication)");
     }
 }

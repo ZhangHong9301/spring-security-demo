@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.session.InvalidSessionStrategy;
 import org.springframework.security.web.session.SessionInformationExpiredStrategy;
 import org.springframework.social.security.SpringSocialConfigurer;
@@ -63,7 +64,6 @@ public class BrowserSecurityConfig extends AbstractChannelSecurityConfig {
     private AuthorizeConfigManager authorizeConfigManager;
 
 
-
     @Bean
     public PersistentTokenRepository persistentTokenRepository() {
         JdbcTokenRepositoryImpl tokenRepository = new JdbcTokenRepositoryImpl();
@@ -79,30 +79,32 @@ public class BrowserSecurityConfig extends AbstractChannelSecurityConfig {
 
         http.apply(captchaSecurityConfig)
                 .and()
-            .apply(smsCaptchaAuthenticationSecurityConfig)
+                .apply(smsCaptchaAuthenticationSecurityConfig)
                 .and()
-            .apply(mySocialSecurityConfig)
+                .apply(mySocialSecurityConfig)
                 .and()
-            .rememberMe()
+                .rememberMe()
                 .tokenRepository(persistentTokenRepository())
                 .tokenValiditySeconds(securityProperties.getBrowser().getRememberMeSeconds())
                 .userDetailsService(myUserDetailsService)
                 .and()
-            .sessionManagement()
+                .sessionManagement()
                 .invalidSessionStrategy(invalidSessionStrategy)
                 .maximumSessions(securityProperties.getBrowser().getSession().getMaximumSessions())
                 .maxSessionsPreventsLogin(securityProperties.getBrowser().getSession().isMaxSessionsPreventsLogin())
                 .expiredSessionStrategy(sessionInformationExpiredStrategy)
                 .and()
                 .and()
-            .logout()
+                .logout()
                 .logoutUrl("/signOut")
                 .logoutSuccessHandler(logoutSuccessHandler)
                 /*清除浏览器中的cookies*/
                 .deleteCookies("JSESSIONID")
                 .and()
+                .csrf()
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).ignoringAntMatchers(SecurityConstants.DEFAULT_LOGIN_PROCESSING_URL_FORM);
 
-            .csrf().disable();
+        // .csrf().ignoringAntMatchers("/user/list",SecurityConstants.DEFAULT_LOGIN_PROCESSING_URL_FORM);
 
         authorizeConfigManager.config(http.authorizeRequests());
 
